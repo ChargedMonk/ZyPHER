@@ -12,26 +12,30 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 
+cmd = 'sudo ifconfig wlan0 down'
+os.system(cmd)
 camera = picamera.PiCamera()
+now=dt.datetime.now()
+print(now.strftime("%d-%m-%Y %H:%M:%S"))
+time.sleep(60)
 
 
 def sendvid():
     
     now=dt.datetime.now()
-
-    camera.vflip=True
+    camera.rotation = -90
+    #camera.vflip=True
     #camera.start_preview()
-    time.sleep(2)
-    camera.capture('example.jpg')
+    camera.capture('example.jpg' )
     #camera.stop_preview()
     time.sleep(2)
     camera.start_recording('examplevid.h264')
-    time.sleep(5)
+    time.sleep(10)
     camera.stop_recording()
 
     
-    fromaddr = '4thotdestroyers@gmail.com'
-    toaddr = '*****@gmail.com,********@gmail.com'
+    fromaddr = '*************'
+    toaddr = '*************'
     alladdr = toaddr.split(',')
     msg = MIMEMultipart()
     msg['From'] = fromaddr
@@ -40,7 +44,7 @@ def sendvid():
     body = 'Latest Image of the room\n\nUploading Video Soon'
     msg.attach(MIMEText(body, 'plain'))
 
-    filename = now.strftime("%d-%m-%Y %H:%M:%S") + '.jpg'
+    filename = now.strftime("%d-%m-%Y %H:%M:%S")  + '.jpg'
     attachment = open('/example.jpg', 'rb')
 
     part = MIMEBase('application', 'octet-stream')
@@ -51,7 +55,7 @@ def sendvid():
 
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
-    server.login(fromaddr, 'iitjammu')
+    server.login(fromaddr, '<password of email address>')
     text = msg.as_string()
     server.sendmail(fromaddr, alladdr, text)
     server.quit()
@@ -91,17 +95,21 @@ def sendvid():
     os.system('rm ' + '/examplevid.h264')
     os.system('rm ' + '/examplevid.mp4')
 
-GPIO.setmode(GPIO.BCM)
 
-GPIO.setup(21, GPIO.IN) 
- 
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(20, GPIO.IN,GPIO.PUD_DOWN) 
+#GPIO.setup(24, GPIO.OUT)
 try:
     while True:
-      if GPIO.input(21): 
-         print('Motion Detected')
+      if GPIO.input(20): 
+         now=dt.datetime.now()
+         print('Motion Detected',now.strftime("%d-%m-%Y %H:%M:%S"))
+         cmd2 = 'sudo ifconfig wlan0 up'
+         os.system(cmd2)
          sendvid()
-         time.sleep(600)  
+         cmd2 = 'sudo ifconfig wlan0 down'
+         os.system(cmd2)
+         time.sleep(300) 
 except KeyboardInterrupt:
     GPIO.cleanup()
-
-
