@@ -37,9 +37,9 @@ First setup the raspberry pi, camera module and the PIR sensor. Follow this [qui
 
 Also change the email id and password according to your choice.
 
-Then edit the .bashrc file to run this program at boot up. You could take a look at [this](https://www.dexterindustries.com/howto/run-a-program-on-your-raspberry-pi-at-startup/) for help.
+You can edit the .bashrc file to run this program at boot up. Take a look at [this](https://www.dexterindustries.com/howto/run-a-program-on-your-raspberry-pi-at-startup/) for help.
 
-Then run the zypher.py file as:
+Or you could run the zypher.py file as:
  
  ```bash
 $ python3 zypher.py
